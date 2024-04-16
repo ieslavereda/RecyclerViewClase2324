@@ -10,7 +10,7 @@
     <ImageButton
         android:id="@+id/ibLinear"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginEnd="8dp"
         android:src="@drawable/baseline_align_horizontal_left_24"
         app:layout_constraintBottom_toBottomOf="@+id/ibGrid"
@@ -20,7 +20,7 @@
     <ImageButton
         android:id="@+id/ibGrid"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:src="@drawable/baseline_grid_view_24"
@@ -40,4 +40,15 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ibLinear" />
+
+    <ImageButton
+        android:id="@+id/ibSort"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ibLinear"
+        app:layout_constraintEnd_toStartOf="@+id/ibLinear"
+        app:layout_constraintTop_toTopOf="@+id/ibLinear"
+        app:srcCompat="@android:drawable/checkbox_off_background" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

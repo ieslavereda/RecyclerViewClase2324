@@ -1,5 +1,8 @@
 package es.ieslavereda.myrecyclerview23_24;
 
+import static es.ieslavereda.myrecyclerview23_24.MyRecyclerViewAdapter.SORT.*;
+import static es.ieslavereda.myrecyclerview23_24.MyRecyclerViewAdapter.*;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -22,9 +25,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private List<Trabajador> trabajadores;
     private RecyclerView recyclerView;
-
     private ImageButton ibGrid;
     private ImageButton ibLinear;
+    private ImageButton ibSort;
+
+    private SORT ordenacion;
 
     private boolean isLinear;
     private MyRecyclerViewAdapter mrva;
@@ -43,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         isLinear=true;
+
+        ordenacion = NORMAL;
 
         trabajadores = new ArrayList<>(
                 Arrays.asList(
@@ -80,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         new Trabajador(R.mipmap.ic_politico_retirado, "Ruben", "Diaz", "Politico retirado"),
                         new Trabajador(R.mipmap.ic_vendedor, "Rafa", "Garcia", "Teruel"),
 
-
                         new Trabajador(R.mipmap.ic_youtuber, "Jose", "Garcia", "Sanz")
                 )
         );
@@ -88,6 +94,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView = findViewById(R.id.recyclerView);
         ibGrid = findViewById(R.id.ibGrid);
         ibLinear = findViewById(R.id.ibLinear);
+        ibSort = findViewById(R.id.ibSort);
+
+        ibSort.setOnClickListener(
+                view -> {
+                    ordenacion = ordenacion.next();
+                    mrva.sort(ordenacion);
+                    switch (ordenacion){
+                        case DES:ibSort.setImageDrawable(getDrawable(android.R.drawable.arrow_down_float));
+                        break;
+                        case ASC:ibSort.setImageDrawable(getDrawable(android.R.drawable.arrow_up_float));
+                            break;
+                        default:ibSort.setImageDrawable(getDrawable(android.R.drawable.checkbox_off_background));
+
+                    }
+                }
+        );
 
         ibGrid.setOnClickListener( view -> {
             isLinear=false;
@@ -98,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isLinear=true;
             updateRecycler();
         });
-
 
         mrva = new MyRecyclerViewAdapter(this,trabajadores);
         mrva.setLayout(R.layout.recycler_list_item);
