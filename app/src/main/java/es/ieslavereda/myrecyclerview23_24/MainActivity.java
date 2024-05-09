@@ -9,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -17,13 +16,18 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+import es.ieslavereda.myrecyclerview23_24.API.Connector;
+import es.ieslavereda.myrecyclerview23_24.base.BaseActivity;
+import es.ieslavereda.myrecyclerview23_24.base.CallInterface;
+import es.ieslavereda.myrecyclerview23_24.model.Oficio;
+import es.ieslavereda.myrecyclerview23_24.model.Usuario;
 
-    private List<Trabajador> trabajadores;
+public class MainActivity extends BaseActivity implements View.OnClickListener, CallInterface {
+
+    private List<Usuario> trabajadores;
+    private List<Oficio> oficios;
     private RecyclerView recyclerView;
     private ImageButton ibGrid;
     private ImageButton ibLinear;
@@ -39,57 +43,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
 
         isLinear=true;
 
         ordenacion = NORMAL;
-
-        trabajadores = new ArrayList<>(
-                Arrays.asList(
-                        new Trabajador(R.mipmap.ic_actor, "Carlos", "Garcia", "Actor"),
-                        new Trabajador(R.mipmap.ic_albanil, "Pedro", "Martinez", "Albañil"),
-                        new Trabajador(R.mipmap.ic_banquero, "Juan", "Lopez", "Banquero"),
-                        new Trabajador(R.mipmap.ic_cocinero, "Manolo", "Lujan", "Cocinero"),
-                        new Trabajador(R.mipmap.ic_estudiante, "Sergio", "Sanz", "Estudiante"),
-                        new Trabajador(R.mipmap.ic_instagramer, "Luis", "Gimenez", "Instagramer"),
-                        new Trabajador(R.mipmap.ic_pintor, "Tomas", "Sanchez", "Pintor"),
-                        new Trabajador(R.mipmap.ic_policia, "Roberto", "Fernandez", "Policia"),
-                        new Trabajador(R.mipmap.ic_politico_activo, "Martin", "Blasco", "Politico activo"),
-                        new Trabajador(R.mipmap.ic_politico_retirado, "Ruben", "Diaz", "Politico retirado"),
-                        new Trabajador(R.mipmap.ic_vendedor, "Rafa", "Garcia", "Teruel"),
-                        new Trabajador(R.mipmap.ic_actor, "Carlos", "Garcia", "Actor"),
-                        new Trabajador(R.mipmap.ic_albanil, "Pedro", "Martinez", "Albañil"),
-                        new Trabajador(R.mipmap.ic_banquero, "Juan", "Lopez", "Banquero"),
-                        new Trabajador(R.mipmap.ic_cocinero, "Manolo", "Lujan", "Cocinero"),
-                        new Trabajador(R.mipmap.ic_estudiante, "Sergio", "Sanz", "Estudiante"),
-                        new Trabajador(R.mipmap.ic_instagramer, "Luis", "Gimenez", "Instagramer"),
-                        new Trabajador(R.mipmap.ic_pintor, "Tomas", "Sanchez", "Pintor"),
-                        new Trabajador(R.mipmap.ic_policia, "Roberto", "Fernandez", "Policia"),
-                        new Trabajador(R.mipmap.ic_politico_activo, "Martin", "Blasco", "Politico activo"),
-                        new Trabajador(R.mipmap.ic_politico_retirado, "Ruben", "Diaz", "Politico retirado"),
-                        new Trabajador(R.mipmap.ic_vendedor, "Rafa", "Garcia", "Teruel"),
-                        new Trabajador(R.mipmap.ic_actor, "Carlos", "Garcia", "Actor"),
-                        new Trabajador(R.mipmap.ic_albanil, "Pedro", "Martinez", "Albañil"),
-                        new Trabajador(R.mipmap.ic_banquero, "Juan", "Lopez", "Banquero"),
-                        new Trabajador(R.mipmap.ic_cocinero, "Manolo", "Lujan", "Cocinero"),
-                        new Trabajador(R.mipmap.ic_estudiante, "Sergio", "Sanz", "Estudiante"),
-                        new Trabajador(R.mipmap.ic_instagramer, "Luis", "Gimenez", "Instagramer"),
-                        new Trabajador(R.mipmap.ic_pintor, "Tomas", "Sanchez", "Pintor"),
-                        new Trabajador(R.mipmap.ic_policia, "Roberto", "Fernandez", "Policia"),
-                        new Trabajador(R.mipmap.ic_politico_activo, "Martin", "Blasco", "Politico activo"),
-                        new Trabajador(R.mipmap.ic_politico_retirado, "Ruben", "Diaz", "Politico retirado"),
-                        new Trabajador(R.mipmap.ic_vendedor, "Rafa", "Garcia", "Teruel"),
-
-                        new Trabajador(R.mipmap.ic_youtuber, "Jose", "Garcia", "Sanz")
-                )
-        );
 
         recyclerView = findViewById(R.id.recyclerView);
         ibGrid = findViewById(R.id.ibGrid);
@@ -102,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mrva.sort(ordenacion);
                     switch (ordenacion){
                         case DES:ibSort.setImageDrawable(getDrawable(android.R.drawable.arrow_down_float));
-                        break;
+                            break;
                         case ASC:ibSort.setImageDrawable(getDrawable(android.R.drawable.arrow_up_float));
                             break;
                         default:ibSort.setImageDrawable(getDrawable(android.R.drawable.checkbox_off_background));
@@ -121,11 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             updateRecycler();
         });
 
-        mrva = new MyRecyclerViewAdapter(this,trabajadores);
-        mrva.setLayout(R.layout.recycler_list_item);
-        mrva.setListener(this);
-        recyclerView.setAdapter(mrva);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        executeCall(this);
 
 
 
@@ -147,11 +102,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
        int position = recyclerView.getChildAdapterPosition(view);
-       Trabajador trabajador = mrva.getTrabajador(position);
+       Usuario usuario = mrva.getTrabajador(position);
         Toast.makeText(
                 this,
-                "Realizado clic sobre: " + trabajador.getNombre()+" "+trabajador.getApellidos(),
+                "Realizado clic sobre: " + usuario.getNombre()+" "+usuario.getApellidos(),
                 Toast.LENGTH_LONG)
                 .show();
+
+        executeCall(new CallInterface() {
+
+            private int rows;
+
+            @Override
+            public void doInBackground() {
+
+                rows = Connector.getConector().delete(Integer.class,"usuarios/"+usuario.getIdUsuario());
+
+            }
+
+            @Override
+            public void doInUI() {
+                if(rows==1)
+                    mrva.removeUser(usuario);
+            }
+        });
+    }
+
+    @Override
+    public void doInBackground() {
+
+        trabajadores = Connector.getConector().getAsList(Usuario.class,"usuarios");
+        oficios = Connector.getConector().getAsList(Oficio.class,"oficios");
+
+    }
+
+    @Override
+    public void doInUI() {
+        mrva = new MyRecyclerViewAdapter(this,trabajadores,oficios);
+        mrva.setLayout(R.layout.recycler_list_item);
+        mrva.setListener(this);
+        recyclerView.setAdapter(mrva);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 }

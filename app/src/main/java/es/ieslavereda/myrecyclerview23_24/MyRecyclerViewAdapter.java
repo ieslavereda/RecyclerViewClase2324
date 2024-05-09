@@ -12,23 +12,30 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import es.ieslavereda.myrecyclerview23_24.MyRecyclerViewAdapter.MyViewHolder;
+import es.ieslavereda.myrecyclerview23_24.base.ImageDownloader;
+import es.ieslavereda.myrecyclerview23_24.base.Parameters;
+import es.ieslavereda.myrecyclerview23_24.model.Oficio;
+import es.ieslavereda.myrecyclerview23_24.model.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
-    private List<Trabajador> itemsToShow;
-    private List<Trabajador> items;
+    private List<Usuario> itemsToShow;
+    private List<Usuario> items;
+    private List<Oficio> oficios;
 
     private Context context;
     private LayoutInflater layoutInflater;
     private int layout;
     private View.OnClickListener listener;
 
-    public MyRecyclerViewAdapter(Context context, List<Trabajador> trabajadors) {
+    public MyRecyclerViewAdapter(Context context, List<Usuario> trabajadors,List<Oficio> oficios) {
         super();
+        this.oficios = oficios;
         this.itemsToShow = trabajadors;
         this.items = new ArrayList<>(trabajadors);
         this.context = context;
@@ -51,18 +58,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
         this.listener = listener;
     }
 
-    public Trabajador getTrabajador(int position) {
+    public Usuario getTrabajador(int position) {
         return itemsToShow.get(position);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        Trabajador trabajador = itemsToShow.get(position);
+        Usuario usuario = itemsToShow.get(position);
+        Oficio oficio = getOficioById(usuario.getOficio_idOficio());
 
-        holder.tvNombre.setText(trabajador.getNombre() + " " + trabajador.getApellidos());
-        holder.tvOficio.setText(trabajador.getOficio());
-        holder.ivOficio.setImageResource(trabajador.getImagen());
+        holder.tvNombre.setText(usuario.getNombre() + " " + usuario.getApellidos());
+        holder.tvOficio.setText(oficio.getDescripcion());
+        ImageDownloader.downloadImage(context, Parameters.BASE_URL_IMAGE+oficio.getImageUrl(),holder.ivOficio,R.drawable.ic_launcher_foreground);
 
     }
 
@@ -95,6 +103,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     }
 
+    public void removeUser(Usuario trabajador) {
+        items.remove(trabajador);
+        itemsToShow.remove(trabajador);
+        notifyDataSetChanged();
+    }
+
 
     enum SORT {
         ASC, DES, NORMAL;
@@ -122,5 +136,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
             tvOficio = itemView.findViewById(R.id.tvOficio);
             constraintLayout = itemView.findViewById(R.id.constraintLayout);
         }
+    }
+
+    private Oficio getOficioById(int id){
+        Optional<Oficio> optional = oficios.stream()
+                .filter(o->o.getIdOficio()==id)
+                .findFirst();
+        if(optional.isPresent())
+            return optional.get();
+        else return null;
     }
 }
